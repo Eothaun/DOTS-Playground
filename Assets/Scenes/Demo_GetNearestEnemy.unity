@@ -340,7 +340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 3251302454976930725, guid: 39e975cd720c351419df00b5666fd6ab, type: 3}
-  amounts: {x: 10, y: 10, z: 10}
+  amounts: {x: 5, y: 5, z: 5}
   padding: {x: 5, y: 5, z: 5}
 --- !u!4 &190176910
 Transform:
@@ -1066,7 +1066,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 10
-  rotationSpeed: 2
+  rotationSpeed: 0.4
 --- !u!114 &1696410905
 MonoBehaviour:
   m_ObjectHideFlags: 0
