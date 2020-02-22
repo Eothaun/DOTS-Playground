@@ -4,6 +4,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 [Serializable]
-public struct EnemyComponentTag : IComponentData
+public struct EnemyTag : IComponentData
 {
 }
