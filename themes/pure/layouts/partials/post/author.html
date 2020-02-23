@@ -1,0 +1,13 @@
+
+<br>Written by: 
+{{ $authors := .Site.Params.profile.authors }}
+{{ $page_authors := .Params.author}}
+{{ $bool := false}}
+{{range $elm := $authors}}
+    {{$id := index $elm 0}}
+    {{range $author := $page_authors}}
+        {{if eq $author $id}}
+            <a href="{{index $elm 2}}"><i class="icon icon-users"></i> {{index $elm 1}} </a>
+        {{end}}
+    {{end}}
+{{end}}
