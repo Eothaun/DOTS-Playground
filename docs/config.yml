@@ -1,4 +1,4 @@
-baseURL: https://blog.cyroxx.de
+baseURL: https://eothaun.github.io/DOTS-Playground/
 theme: pure
 title: Yet another gamedev blog
 defaultContentLanguage: en  # en/zh/...
@@ -90,16 +90,16 @@ params:
     enabled: true # Whether to show profile bar
     avatar: avatar.png
     gravatar: # Gravatar email address, if you enable Gravatar, your avatar config will be overriden
-    author: Simon & Niels
-    authors: [[Simon,Simon Renger,"http://simonrenger.de"],[Niels,Niels van Steeg,"https://github.com/Nvs2000"],[Menno,Menno Markus,"https://github.com/MennoMarkus"]]
+    author: DOTS Playground
+    authors: [[Simon,Simon Renger,"http://simonrenger.de"],[Niels,Niels van Steeg,"https://github.com/Nvs2000"],[Menno,Menno Markus,"https://github.com/MennoMarkus"],[Marjolein,Marjolein Kaal,"https://github.com/MarjoleinKaal"],[Maiko,Maiko Steeman,"https://github.com/FireFlyForLife"],[Jesse,Jesse Roffel,"https://github.com/jesseroffel"],[Jonah,Jonah Rutten,"https://github.com/JonahRutten"],[Pepijn,Pepijn Averink,"https://github.com/PepijnAverink"],[Robin,Robin,"https://github.com/RobinACS"]]
     author_title: Year 3 Students Gamedevs
     author_description: Good Good Study, Day Day Up~
     location: Breda University of Applied Sciences
-    follow: https://github.com/simonrenger
+    follow: https://github.com/Eothaun/DOTS-Playground/
     # Social Links
     social:
       links:
-        github: [[Simon,"https://github.com/simonrenger"], [Niels,"https://github.com/Nvs2000"],[Menno,"https://github.com/MennoMarkus"]]
+        github: [[Marjolein,"https://github.com/MarjoleinKaal"],[Maiko,"https://github.com/FireFlyForLife"],[Menno,"https://github.com/MennoMarkus"], [Niels,"https://github.com/Nvs2000"],[Jesse,"https://github.com/jesseroffel"],[Jonah,"https://github.com/JonahRutten"],[Pepijn,"https://github.com/PepijnAverink"],[Robin,"https://github.com/RobinACS"],[Simon,"https://github.com/simonrenger"]]
         # weibo: http://weibo.com/{yourid}
         # twitter: https://twitter.com/
         # facebook: /
