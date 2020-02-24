@@ -6,7 +6,6 @@ categories=["dots","ecs","unity"]
 series = ["Unity's DOTS"]
 date= 2020-02-23T10:59:02+01:00
 description="Getting started with Unity DOTS Editor"
-draft=true
 +++
 
 ## Introduction
