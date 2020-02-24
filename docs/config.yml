@@ -1,4 +1,4 @@
-baseURL: https://eothaun.github.io/DOTS-Playground/
+baseURL: /
 theme: pure
 title: Yet another gamedev blog
 defaultContentLanguage: en  # en/zh/...
