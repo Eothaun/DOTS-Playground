@@ -6,7 +6,6 @@ footnoteReturnLinkContents: ↩
 hasCJKLanguage: true
 paginate: 7
 enableEmoji: true
-canonifyURLs: true
 googleAnalytics: ""      # UA-XXXXXXXX-X 
 permalinks:
   posts: /:year/:month/:filename/
@@ -192,4 +191,3 @@ params:
     - category
     - tag
     - recent_posts
-
