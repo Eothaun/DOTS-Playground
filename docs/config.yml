@@ -1,4 +1,4 @@
-baseURL: /
+baseURL: http://dotsplayground.com/
 theme: pure
 title: Yet another gamedev blog
 defaultContentLanguage: en  # en/zh/...
