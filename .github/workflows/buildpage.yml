@@ -19,7 +19,7 @@ jobs:
           hugo-version: '0.64.0'
           extended: true
       - name: Build
-        run: cd docs/ && hugo --minify
+        run: cd docs/ && hugo --minify &&  echo "dotsplayground.com">./docs/public/CNAME
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
