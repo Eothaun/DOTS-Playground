@@ -53,7 +53,7 @@ There are two scene view modes for live link. `SceneView: Live Game State` makes
 Can be found under: `Jobs > Burst > Open Inspector...`
 
 {{< figure src="/DOTSEditor/burstInspector.png">}}  
-The burst inspector is a useful tool for low level performance optimizations. Most people won't be able or need to read the compiler output. However the `LLVM Optimization Diagnostics` can still be interesting to look at. It gives compiler info in a more human readable manner, which can be used to for instance check if your code is getting vectorized.
+The burst inspector is a useful tool for low level performance optimizations. Most people will not be able or need to read the compiler output. However the `LLVM Optimization Diagnostics` can still be interesting to look at. It gives compiler info in a more human readable manner, which can be used to for instance check if your code is getting vectorized.
 
 {{< figure src="/DOTSEditor/burstBadCode.png">}}
 Here you can see that the compiler marked line 35 as unable to vectorize. 
@@ -61,8 +61,14 @@ Here you can see that the compiler marked line 35 as unable to vectorize.
 {{< figure src="/DOTSEditor/burstGoodCode.png">}}
 After a change in the code line 35 is marked as vectorized.
 
+## DOTS Compiler
+Can be found under: `DOTS > DOTS Compiler > Open Inspector...`
+
+{{< figure src="/DOTSEditor/DOTSCompiler.png">}} 
+The DOTS Compiler can show DOTS generated code. This means its able to show you the code generated when using the `[GenerateAuthoringComponent]` tag.
+
 ## Others
-To further control the compilation process you can enable and disable multiple setting having to do with debugging and safety under `Jobs`. These speak for themselves so I won't be going in depth any further.
+To further control the compilation process you can enable and disable multiple setting having to do with debugging and safety under `Jobs`. These speak for themselves so I will not be going in depth any further.
 
 {{< figure src="/DOTSEditor/enterPlayModeSettings.png">}}  
-To speed up the load time when pressing play in the editor, you can disable scene and domain reload under: `Edit > Player Settings > Editor > Enter Play Mode Settings`. This is not directly connected to DOTS in any way. But it's main downsides largely don't apply to DOTS code, while still giving you the benefits of improved speed. For more information see the [documentation](https://docs.unity3d.com/2019.3/Documentation/Manual/ConfigurableEnterPlayMode.html).
+To speed up the load time when pressing play in the editor, you can disable scene and domain reload under: `Edit > Player Settings > Editor > Enter Play Mode Settings`. This is not directly connected to DOTS in any way. But its main downsides largely do not apply to DOTS code, while still giving you the benefits of improved speed. For more information see the [documentation](https://docs.unity3d.com/2019.3/Documentation/Manual/ConfigurableEnterPlayMode.html).
