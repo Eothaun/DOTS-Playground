@@ -8,14 +8,6 @@ using UnityEngine;
 using static Unity.Mathematics.math;
 using float4x4 = Unity.Mathematics.float4x4;
 
-public struct SpawnerOfBunches : IComponentData
-{
-    public Entity prefab;
-    public Vector3Int amounts;
-    public Vector3 padding;
-    public bool hasSpawned;
-}
-
 
 public class SpawnBunchesOfPrefabs : JobComponentSystem
 {
