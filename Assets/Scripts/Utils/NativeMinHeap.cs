@@ -216,7 +216,7 @@ public unsafe struct NativeMinHeap<TValue, TPriority> : IDisposable
 
         NativeMinHeapDisposeJob disposeJob = new NativeMinHeapDisposeJob()
         {
-            Data = new NativeArrayDispose()
+            Data = new NativeMinHeapDispose()
             {
                 m_Buffer = m_Buffer,
                 m_AllocatorLabel = m_AllocatorLabel,
@@ -252,7 +252,7 @@ public struct NativeMinHeapNode<TValue, TPriority>
 }
 
 [NativeContainer]
-internal unsafe struct NativeArrayDispose
+internal unsafe struct NativeMinHeapDispose
 {
     [NativeDisableUnsafePtrRestriction] internal void* m_Buffer;
     internal Allocator m_AllocatorLabel;
@@ -268,7 +268,7 @@ internal unsafe struct NativeArrayDispose
 [BurstCompile]
 struct NativeMinHeapDisposeJob : IJob
 {
-    internal NativeArrayDispose Data;
+    internal NativeMinHeapDispose Data;
 
     public void Execute()
     {
