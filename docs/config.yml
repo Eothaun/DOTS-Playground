@@ -191,3 +191,15 @@ params:
     - category
     - tag
     - recent_posts
+
+markup:
+  highlight:
+    codeFences: true
+    guessSyntax: false
+    hl_Lines: ""
+    lineNoStart: 1
+    lineNos: true
+    lineNumbersInTable: true
+    noClasses: true
+    style: solarized-light
+    tabWidth: 4

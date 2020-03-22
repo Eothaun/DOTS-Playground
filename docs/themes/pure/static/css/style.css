@@ -297,6 +297,13 @@ img {
   vertical-align: middle;
 }
 
+img[src$='#center'] {
+  display: block;
+  margin: 1.0rem auto;
+  max-width: 100%;
+  height: auto;
+}
+
 .img-responsive {
   display: block;
   max-width: 100%;
@@ -5599,7 +5606,6 @@ pre .javascript .function,
 pre .js .function {
   color: #8959a8;
 }
-
 pre,
 .highlight {
   background: #fafafa;
@@ -5616,6 +5622,7 @@ pre,
   color: #666;
 }
 
+/* Disable code highlight formatting
 code {
   text-shadow: 0 1px #fff;
   padding: 0.2em 0.4em;
@@ -5679,6 +5686,7 @@ pre:after {
   -webkit-box-shadow: 20px 0 #fdbc40, 40px 0 #35cd4b;
   box-shadow: 20px 0 #fdbc40, 40px 0 #35cd4b;
 }
+*/
 
 .highlight pre {
   border: none;
