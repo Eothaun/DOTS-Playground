@@ -145,6 +145,71 @@ public unsafe struct NativeIntArray : IDisposable
 
 	public int Length => m_Length;
 
+	// Allow parallel writing through NativeIntArray.ParallelWriter in a parallel job.
+	// No reading allowed.
+	[NativeContainerIsAtomicWriteOnly]
+	[NativeContainer]
+	unsafe public struct ParallelWriter
+	{
+		// Copy pointer of the full container.
+		[NativeDisableUnsafePtrRestriction] internal void* m_Buffer;
+		internal int m_Length;
+
+		// Copy the safty handle. The dispose sentinal doesn't need to be copied as no memory will be allocated within this struct.
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+		internal AtomicSafetyHandle m_Safety;
+#endif
+		// Copy length for convenience
+		public int Length => m_Length;
+
+		public int Increment(int index)
+		{
+			// Increment still needs to safety check for write permissions and index range.
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+			AtomicSafetyHandle.CheckWriteAndThrow(m_Safety);
+			if (index < 0 || index > Length)
+				throw new IndexOutOfRangeException(string.Format("Index {0} is out of range of '{1}' Length.", index, Length));
+#endif
+			// Increment is implemented as an atomic operation since it can be incremented by multiple threads at the same time.
+			return Interlocked.Increment(ref *((int*)m_Buffer + index));
+		}
+
+		public int Decrement(int index)
+		{
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+			AtomicSafetyHandle.CheckWriteAndThrow(m_Safety);
+			if (index < 0 || index > Length)
+				throw new IndexOutOfRangeException(string.Format("Index {0} is out of range of '{1}' Length.", index, Length));
+#endif
+			return Interlocked.Decrement(ref *((int*)m_Buffer + index));
+		}
+
+		public int Add(int index, int value)
+		{
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+			AtomicSafetyHandle.CheckWriteAndThrow(m_Safety);
+			if (index < 0 || index > Length)
+				throw new IndexOutOfRangeException(string.Format("Index {0} is out of range of '{1}' Length.", index, Length));
+#endif
+			return Interlocked.Add(ref *((int*)m_Buffer + index), value);
+		}
+	}
+
+	public ParallelWriter AsParallelWriter()
+	{
+		ParallelWriter writer;
+
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+		AtomicSafetyHandle.CheckWriteAndThrow(m_Safety);
+		writer.m_Safety = m_Safety;
+		AtomicSafetyHandle.UseSecondaryVersion(ref writer.m_Safety);
+#endif
+		writer.m_Buffer = m_Buffer;
+		writer.m_Length = m_Length;
+
+		return writer;
+	}
+
 	public void Dispose()
 	{
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
