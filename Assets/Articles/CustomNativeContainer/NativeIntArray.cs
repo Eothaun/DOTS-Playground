@@ -7,6 +7,8 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 
+// Enable support for ".WithDeallocateOnJobCompletion" and "[DeallocateOnJobCompletion]".
+[NativeContainerSupportsDeallocateOnJobCompletion]
 // Needed to mark as a native container.
 [NativeContainer]
 // Ensure our memory layout is the same as the order of our variables.
@@ -120,5 +122,58 @@ public unsafe struct NativeIntArray : IDisposable
 		UnsafeUtility.Free(m_Buffer, m_AllocatorLabel);
 		m_Buffer = null;
 		m_Length = 0;
+	}
+
+	public unsafe JobHandle Dispose(JobHandle inputDeps)
+	{
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+		// DisposeSentinel needs to be cleared on the main thread.
+		DisposeSentinel.Clear(ref m_DisposeSentinel);
+#endif
+
+		// Create a job to dispose of our container and pass a copy of our pointer to it.
+		NativeCustomArrayDisposeJob disposeJob = new NativeCustomArrayDisposeJob()
+		{
+			Data = new NativeCustomArrayDispose()
+			{
+				m_Buffer = m_Buffer,
+				m_AllocatorLabel = m_AllocatorLabel
+			}
+		};
+		JobHandle result = disposeJob.Schedule(inputDeps);
+
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+		AtomicSafetyHandle.Release(m_Safety);
+#endif
+
+		m_Buffer = null;
+		m_Length = 0;
+
+		return result;
+	}
+}
+
+[NativeContainer]
+internal unsafe struct NativeCustomArrayDispose
+{
+	// Relax the pointer safety so jobs can schedule with this struct.
+	[NativeDisableUnsafePtrRestriction] internal void* m_Buffer;
+	internal Allocator m_AllocatorLabel;
+
+	public void Dispose()
+	{
+		// Free the allocated memory
+		UnsafeUtility.Free(m_Buffer, m_AllocatorLabel);
+	}
+}
+
+[BurstCompile]
+internal struct NativeCustomArrayDisposeJob : IJob
+{
+	internal NativeCustomArrayDispose Data;
+
+	public void Execute()
+	{
+		Data.Dispose();
 	}
 }
