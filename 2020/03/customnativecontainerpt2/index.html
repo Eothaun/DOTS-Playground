@@ -1,0 +1,271 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Custom Native Container [Part 2]: Deallocate On Job Completion - Yet another gamedev blog</title><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui"><meta name=renderer content="webkit"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="black"><meta name=format-detection content="telephone=no,email=no,adress=no"><meta name=theme-color content="#000000"><meta http-equiv=window-target content="_top"><meta name=description content="This article will show how to add support to a custom native container for deallocation on job completion. This article is a followup of part 1."><meta name=generator content="Hugo 0.64.0 with theme pure"><title>Custom Native Container [Part 2]: Deallocate On Job Completion - Yet another gamedev blog</title><link rel=stylesheet href=https://dotsplayground.com/css/style.css><meta property="og:title" content="Custom Native Container [Part 2]: Deallocate On Job Completion"><meta property="og:description" content="This article will show how to add support to a custom native container for deallocation on job completion. This article is a followup of part 1."><meta property="og:type" content="article"><meta property="og:url" content="https://dotsplayground.com/2020/03/customnativecontainerpt2/"><meta property="article:published_time" content="2020-03-18T11:00:02+01:00"><meta property="article:modified_time" content="2020-03-18T11:00:02+01:00"><meta itemprop=name content="Custom Native Container [Part 2]: Deallocate On Job Completion"><meta itemprop=description content="This article will show how to add support to a custom native container for deallocation on job completion. This article is a followup of part 1."><meta itemprop=datePublished content="2020-03-18T11:00:02+01:00"><meta itemprop=dateModified content="2020-03-18T11:00:02+01:00"><meta itemprop=wordCount content="765"><meta itemprop=keywords content="dots,ecs,csharp,intermediate,native container,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Custom Native Container [Part 2]: Deallocate On Job Completion"><meta name=twitter:description content="This article will show how to add support to a custom native container for deallocation on job completion. This article is a followup of part 1."><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head></head><body class=main-center itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=slimContent><div class=navbar-header><div class="profile-block text-center"><a id=avatar href=https://github.com/Eothaun/DOTS-Playground/ target=_blank><img class="img-circle img-rotate" src=https://dotsplayground.com/avatar.png width=200 height=200></a><h2 id=name class="hidden-xs hidden-sm">DOTS Playground</h2><h3 id=title class="hidden-xs hidden-sm hidden-md">Year 3 Students Gamedevs</h3><small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Breda University of Applied Sciences</small></div><div class=search id=search-form-wrap><form class="search-form sidebar-form"><div class=input-group><input type=text class="search-form-input form-control" placeholder=Search>
+<span class=input-group-btn><button type=submit class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button></span></div><div class=ins-search><div class=ins-search-mask></div><div class=ins-search-container><div class=ins-input-wrapper><input type=text class=ins-search-input placeholder="Type something..." x-webkit-speech>
+<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button></div><div class=ins-section-wrapper><div class=ins-section-container></div></div></div></div></form></div><button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
+<span class=sr-only>Toggle navigation</span>
+<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button></div><nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation><ul class="nav navbar-nav main-nav"><li class="menu-item menu-item-home"><a href=/><i class="icon icon-home-fill"></i><span class=menu-title>Home</span></a></li><li class="menu-item menu-item-series"><a href=/series><i class="icon icon-project"></i><span class=menu-title>Series</span></a></li><li class="menu-item menu-item-archives"><a href=/posts><i class="icon icon-archives-fill"></i><span class=menu-title>Archives</span></a></li><li class="menu-item menu-item-categories"><a href=/categories><i class="icon icon-folder"></i><span class=menu-title>Categories</span></a></li><li class="menu-item menu-item-tags"><a href=/tags><i class="icon icon-tags"></i><span class=menu-title>Tags</span></a></li><li class="menu-item menu-item-about"><a href=/about><i class="icon icon-users"></i><span class=menu-title>About</span></a></li></ul></nav></div></header><aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><div class=widget><h3 class=widget-title>Board</h3><div class=widget-body><div id=board><div class=content><p>Write programs that do one thing and do it well. Write programs to work together — McIlroy Unix philosophy<br><br>Write systems that do one thing and do it well. Write systems to work together — DOD adoption</p></div></div></div></div><div class=widget><h3 class=widget-title>Categories</h3><div class=widget-body><ul class=category-list><li class=category-list-item><a href=https://dotsplayground.com/categories/community/ class=category-list-link>community</a><span class=category-list-count>1</span></li><li class=category-list-item><a href=https://dotsplayground.com/categories/data-oriented-design/ class=category-list-link>data-oriented-design</a><span class=category-list-count>1</span></li><li class=category-list-item><a href=https://dotsplayground.com/categories/dots/ class=category-list-link>dots</a><span class=category-list-count>8</span></li><li class=category-list-item><a href=https://dotsplayground.com/categories/ecs/ class=category-list-link>ecs</a><span class=category-list-count>7</span></li><li class=category-list-item><a href=https://dotsplayground.com/categories/unity/ class=category-list-link>unity</a><span class=category-list-count>8</span></li></ul></div></div><div class=widget><h3 class=widget-title>Tags</h3><div class=widget-body><ul class=tag-list><li class=tag-list-item><a href=https://dotsplayground.com/tags/beginner/ class=tag-list-link>beginner</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/community/ class=tag-list-link>community</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/componentdatafromentity/ class=tag-list-link>componentdatafromentity</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/csharp/ class=tag-list-link>csharp</a><span class=tag-list-count>6</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/data-oriented-design/ class=tag-list-link>data-oriented-design</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/dod/ class=tag-list-link>dod</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/dots/ class=tag-list-link>dots</a><span class=tag-list-count>8</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/ecs/ class=tag-list-link>ecs</a><span class=tag-list-count>6</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/education/ class=tag-list-link>education</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/esc/ class=tag-list-link>esc</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/hybrid/ class=tag-list-link>hybrid</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/intermediate/ class=tag-list-link>intermediate</a><span class=tag-list-count>4</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/learning/ class=tag-list-link>learning</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/native-container/ class=tag-list-link>native-container</a><span class=tag-list-count>4</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/physics/ class=tag-list-link>physics</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/reference/ class=tag-list-link>reference</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/relation/ class=tag-list-link>relation</a><span class=tag-list-count>1</span></li><li class=tag-list-item><a href=https://dotsplayground.com/tags/software-engineering/ class=tag-list-link>software-engineering</a><span class=tag-list-count>1</span></li></ul></div></div><div class=widget><h3 class=widget-title>Recent Posts</h3><div class=widget-body><ul class="recent-post-list list-unstyled no-thumbnail"><li><div class=item-inner><p class=item-title><a href=https://dotsplayground.com/2020/03/customnativecontainerpt4/ class=title>Custom Native Container [Part 4]: Parallel Job Using ParallelWriter</a></p><p class=item-date><time datetime="2020-03-18 11:02:02 +0100 +0100" itemprop=datePublished>2020-03-18</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://dotsplayground.com/2020/03/customnativecontainerpt3/ class=title>Custom Native Container [Part 3]: Parallel Job Using Min Max</a></p><p class=item-date><time datetime="2020-03-18 11:01:02 +0100 +0100" itemprop=datePublished>2020-03-18</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://dotsplayground.com/2020/03/customnativecontainerpt2/ class=title>Custom Native Container [Part 2]: Deallocate On Job Completion</a></p><p class=item-date><time datetime="2020-03-18 11:00:02 +0100 +0100" itemprop=datePublished>2020-03-18</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://dotsplayground.com/2020/03/customnativecontainerpt1/ class=title>Custom Native Container [Part 1]: The Basics</a></p><p class=item-date><time datetime="2020-03-18 10:59:02 +0100 +0100" itemprop=datePublished>2020-03-18</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://dotsplayground.com/2020/02/dotseditor/ class=title>Unity DOTS Editor</a></p><p class=item-date><time datetime="2020-02-23 10:59:02 +0100 +0100" itemprop=datePublished>2020-02-23</time></p></div></li></ul></div></div></div></aside><aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><nav id=toc class=article-toc><h3 class=toc-title>Catalogue</h3><div class="toc-content always-active"><nav id=TableOfContents><ul><li><a href=#introduction>Introduction</a></li><li><a href=#1-enable-support>1) Enable Support</a></li><li><a href=#2-jobhandle-dispose>2) JobHandle Dispose</a></li><li><a href=#3-nativecustomarraydisposejob-and-nativecustomarraydispose>3) NativeCustomArrayDisposeJob And NativeCustomArrayDispose</a></li><li><a href=#usage>Usage</a></li><li><a href=#conclusion>Conclusion</a></li></ul></nav></div></nav></div></aside><main class=main role=main><div class=content><article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting><div class=article-header><h1 itemprop=name><a class=article-title href=/2020/03/customnativecontainerpt2/>Custom Native Container [Part 2]: Deallocate On Job Completion</a></h1><div class=article-meta><span class=article-date><i class="icon icon-calendar-check"></i><a href=https://dotsplayground.com/2020/03/customnativecontainerpt2/ class=article-date><time datetime="2020-03-18 11:00:02 +0100 +0100" itemprop=datePublished>2020-03-18</time></a>
+</span><span class=article-category><i class="icon icon-folder"></i><a class=article-category-link href=/categories/dots/>dots</a>
+<a class=article-category-link href=/categories/ecs/>ecs</a>
+<a class=article-category-link href=/categories/unity/>unity</a></span>
+<span class=article-tag><i class="icon icon-tags"></i><a class=article-tag-link href=/tags/dots/>dots</a>
+<a class=article-tag-link href=/tags/ecs/>ecs</a>
+<a class=article-tag-link href=/tags/csharp/>csharp</a>
+<a class=article-tag-link href=/tags/intermediate/>intermediate</a>
+<a class=article-tag-link href=/tags/native-container/>native container</a></span>
+<span class="post-wordcount hidden-xs" itemprop=wordCount>Word Count:765 words</span>
+<span class="post-readcount hidden-xs" itemprop=timeRequired>Read Count:4 minutes</span><br>Written by:
+<a href=https://github.com/MennoMarkus><i class="icon icon-users"></i>Menno Markus</a></div></div><div class="article-entry marked-body" itemprop=articleBody><h2 id=introduction>Introduction</h2><p>In the previous article in this series, <a href=/2020/03/customnativecontainerpt1/>Custom Native Container [Part 1]: The Basics</a>, we looked into how we can create a bare basic custom native container for usage with the job system. In this article we will extend our <code>NativeIntArray</code> container to add support for usage with <code>.WithDeallocateOnJobCompletion</code> and <code>[DeallocateOnJobCompletion]</code>.</p><p><a href=https://github.com/Eothaun/DOTS-Playground/commit/5c00dadb86cc68ed76f329f8b8a49a7249cd475d#diff-4107cbc15e6b7565cf1a71565ac1e755>The result of the previous article can be found here.</a><br><a href=https://github.com/Eothaun/DOTS-Playground/commit/0afe23b3c72c4286029b94ea0dac78b29dd1b8f0#diff-4107cbc15e6b7565cf1a71565ac1e755>The final result of this article can be found here.</a></p><h2 id=1-enable-support>1) Enable Support</h2><p>To enable support for deallocation on job completion we must add the <code>[NativeContainerSupportsDeallocateOnJobCompletion]</code> attribute to our container struct. We will also use this opportunity to have a quick reminder of what our container roughly looked like: a simple array of integers.</p><div class=highlight><div style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style=display:block;width:100%;background-color:#d6d0bf><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span></span><span style=display:block;width:100%;background-color:#d6d0bf><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span></span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#859900>using</span> <span style=color:#268bd2>System</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>System.Diagnostics</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>System.Runtime.InteropServices</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>System.Threading</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>Unity.Burst</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>Unity.Collections</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>Unity.Collections.LowLevel.Unsafe</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>Unity.Jobs</span>;
+
+<span style=display:block;width:100%;background-color:#d6d0bf><span style=color:#93a1a1;font-style:italic>// Enable support for &#34;.WithDeallocateOnJobCompletion&#34; and &#34;[DeallocateOnJobCompletion]&#34;.
+</span></span><span style=display:block;width:100%;background-color:#d6d0bf><span style=color:#93a1a1;font-style:italic></span><span style=color:#268bd2>[NativeContainerSupportsDeallocateOnJobCompletion]</span>
+</span><span style=color:#268bd2>[NativeContainer]</span> 
+<span style=color:#268bd2>[StructLayout(LayoutKind.Sequential)]</span> 
+<span style=color:#859900>public</span> <span style=color:#859900>unsafe</span> <span style=color:#859900>struct</span> <span style=color:#cb4b16>NativeIntArray</span> : <span style=color:#268bd2>IDisposable</span>
+{
+<span style=color:#268bd2>    [NativeDisableUnsafePtrRestriction]</span> <span style=color:#859900>internal</span> <span style=color:#859900>void</span>* <span style=color:#268bd2>m_Buffer</span>;
+    <span style=color:#859900>internal</span> <span style=color:#859900;font-weight:700>int</span> <span style=color:#268bd2>m_Length</span>;
+
+<span style=color:#93a1a1;font-style:italic>#if ENABLE_UNITY_COLLECTIONS_CHECKS
+</span><span style=color:#93a1a1;font-style:italic></span>    <span style=color:#859900>internal</span> <span style=color:#268bd2>AtomicSafetyHandle</span> <span style=color:#268bd2>m_Safety</span>;
+<span style=color:#268bd2>    [NativeSetClassTypeToNullOnSchedule]</span> <span style=color:#859900>internal</span> <span style=color:#268bd2>DisposeSentinel</span> <span style=color:#268bd2>m_DisposeSentinel</span>;
+<span style=color:#93a1a1;font-style:italic>#endif
+</span><span style=color:#93a1a1;font-style:italic></span>
+    <span style=color:#859900>internal</span> <span style=color:#268bd2>Allocator</span> <span style=color:#268bd2>m_AllocatorLabel</span>;
+
+    <span style=color:#859900>public</span> <span style=color:#268bd2>NativeIntArray</span>(<span style=color:#859900;font-weight:700>int</span> <span style=color:#268bd2>length</span>, <span style=color:#268bd2>Allocator</span> <span style=color:#268bd2>allocator</span>, <span style=color:#268bd2>NativeArrayOptions</span> <span style=color:#268bd2>options</span> = <span style=color:#268bd2>NativeArrayOptions</span>.<span style=color:#268bd2>ClearMemory</span>) { <span style=color:#93a1a1;font-style:italic>/* More Code */</span> }
+
+    <span style=color:#859900>static</span> <span style=color:#859900>void</span> <span style=color:#268bd2>Allocate</span>(<span style=color:#859900;font-weight:700>int</span> <span style=color:#268bd2>length</span>, <span style=color:#268bd2>Allocator</span> <span style=color:#268bd2>allocator</span>, <span style=color:#859900>out</span> <span style=color:#268bd2>NativeIntArray</span> <span style=color:#268bd2>array</span>)
+    {
+        <span style=color:#859900;font-weight:700>long</span> <span style=color:#268bd2>size</span> = <span style=color:#268bd2>UnsafeUtility</span>.<span style=color:#268bd2>SizeOf</span>&lt;<span style=color:#859900;font-weight:700>int</span>&gt;() * (<span style=color:#859900;font-weight:700>long</span>)<span style=color:#268bd2>length</span>;
+
+		<span style=color:#93a1a1;font-style:italic>/* More Code */</span>
+
+        <span style=color:#268bd2>array</span> = <span style=color:#859900>default</span>(<span style=color:#268bd2>NativeIntArray</span>);
+        <span style=color:#93a1a1;font-style:italic>// Allocate memory for our buffer.
+</span><span style=color:#93a1a1;font-style:italic></span>        <span style=color:#268bd2>array</span>.<span style=color:#268bd2>m_Buffer</span> = <span style=color:#268bd2>UnsafeUtility</span>.<span style=color:#268bd2>Malloc</span>(<span style=color:#268bd2>size</span>, <span style=color:#268bd2>UnsafeUtility</span>.<span style=color:#268bd2>AlignOf</span>&lt;<span style=color:#859900;font-weight:700>int</span>&gt;(), <span style=color:#268bd2>allocator</span>);
+        <span style=color:#268bd2>array</span>.<span style=color:#268bd2>m_Length</span> = <span style=color:#268bd2>length</span>;
+        <span style=color:#268bd2>array</span>.<span style=color:#268bd2>m_AllocatorLabel</span> = <span style=color:#268bd2>allocator</span>;
+
+		<span style=color:#93a1a1;font-style:italic>/* More Code */</span>
+    }
+
+	<span style=color:#93a1a1;font-style:italic>/* More Code */</span>
+</code></pre></td></tr></table></div></div><h2 id=2-jobhandle-dispose>2) JobHandle Dispose</h2><p>Next we will add a new dispose function to our container struct. This dispose function will not deallocate our container immediately, but will instead return a job handle that can be scheduled later. This is how deallocate on job completion works, by scheduling another job to do the cleanup once our job is completed.</p><div class=highlight><div style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">121
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">122
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">123
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">124
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">125
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">126
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">127
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">128
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">129
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">130
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">131
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">132
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">133
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">134
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">135
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">136
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">137
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">138
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">139
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">140
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">141
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">142
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">143
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">144
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">145
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">146
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">147
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">148
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">149
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">150
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">151
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">152
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">153
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">154
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">155
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>    <span style=color:#93a1a1;font-style:italic>/*
+</span><span style=color:#93a1a1;font-style:italic>	 * ... More Code ...
+</span><span style=color:#93a1a1;font-style:italic>	 */</span>
+
+	<span style=color:#859900>public</span> <span style=color:#859900>unsafe</span> <span style=color:#268bd2>JobHandle</span> <span style=color:#268bd2>Dispose</span>(<span style=color:#268bd2>JobHandle</span> <span style=color:#268bd2>inputDeps</span>)
+    {
+<span style=color:#93a1a1;font-style:italic>#if ENABLE_UNITY_COLLECTIONS_CHECKS
+</span><span style=color:#93a1a1;font-style:italic></span>        <span style=color:#93a1a1;font-style:italic>// DisposeSentinel needs to be cleared on the main thread.
+</span><span style=color:#93a1a1;font-style:italic></span>        <span style=color:#268bd2>DisposeSentinel</span>.<span style=color:#268bd2>Clear</span>(<span style=color:#859900>ref</span> <span style=color:#268bd2>m_DisposeSentinel</span>);
+<span style=color:#93a1a1;font-style:italic>#endif
+</span><span style=color:#93a1a1;font-style:italic></span>
+        <span style=color:#93a1a1;font-style:italic>// Create a job to dispose of our container and pass a copy of our pointer to it.
+</span><span style=color:#93a1a1;font-style:italic></span>        <span style=color:#268bd2>NativeCustomArrayDisposeJob</span> <span style=color:#268bd2>disposeJob</span> = <span style=color:#859900>new</span> <span style=color:#268bd2>NativeCustomArrayDisposeJob</span>()
+        {
+            <span style=color:#268bd2>Data</span> = <span style=color:#859900>new</span> <span style=color:#268bd2>NativeCustomArrayDispose</span>() 
+            { 
+                <span style=color:#268bd2>m_Buffer</span> = <span style=color:#268bd2>m_Buffer</span>,
+                <span style=color:#268bd2>m_AllocatorLabel</span> = <span style=color:#268bd2>m_AllocatorLabel</span>
+            }
+        };
+        <span style=color:#268bd2>JobHandle</span> <span style=color:#268bd2>result</span> = <span style=color:#268bd2>disposeJob</span>.<span style=color:#268bd2>Schedule</span>(<span style=color:#268bd2>inputDeps</span>);
+
+<span style=color:#93a1a1;font-style:italic>#if ENABLE_UNITY_COLLECTIONS_CHECKS
+</span><span style=color:#93a1a1;font-style:italic></span>        <span style=color:#268bd2>AtomicSafetyHandle</span>.<span style=color:#268bd2>Release</span>(<span style=color:#268bd2>m_Safety</span>);
+<span style=color:#93a1a1;font-style:italic>#endif
+</span><span style=color:#93a1a1;font-style:italic></span>        
+        <span style=color:#268bd2>m_Buffer</span> = <span style=color:#859900>null</span>;
+        <span style=color:#268bd2>m_Length</span> = <span style=color:#2aa198;font-weight:700>0</span>;
+
+        <span style=color:#859900>return</span> <span style=color:#268bd2>result</span>;
+    }
+
+    <span style=color:#93a1a1;font-style:italic>/*
+</span><span style=color:#93a1a1;font-style:italic>	 * ... More Code ...
+</span><span style=color:#93a1a1;font-style:italic>	 */</span>
+</code></pre></td></tr></table></div></div><h2 id=3-nativecustomarraydisposejob-and-nativecustomarraydispose>3) NativeCustomArrayDisposeJob And NativeCustomArrayDispose</h2><p>As you may have noticed, inside our <code>Dispose</code> function we make use of two new structs. These need to be defined outside out container struct. <code>NativeCustomArrayDispose</code> is used to hold a copy of our container pointer and <code>NativeCustomArrayDisposeJob</code> will call <code>Dispose</code>. Whenever the job gets scheduled, it will internally make sure that no other job is reading or writing to our container.</p><div class=highlight><div style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">150
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">151
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">152
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">153
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">154
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">155
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">156
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">157
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">158
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">159
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">160
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">161
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">162
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">163
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">164
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">165
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">166
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">167
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">168
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">169
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">170
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">171
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">172
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">173
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">174
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">175
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">176
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">177
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#93a1a1;font-style:italic>/*
+</span><span style=color:#93a1a1;font-style:italic>* ... More Code ...
+</span><span style=color:#93a1a1;font-style:italic>*/</span>
+<span style=color:#268bd2>
+</span><span style=color:#268bd2>[NativeContainer]</span>
+<span style=color:#859900>internal</span> <span style=color:#859900>unsafe</span> <span style=color:#859900>struct</span> <span style=color:#cb4b16>NativeCustomArrayDispose</span>
+{
+    <span style=color:#93a1a1;font-style:italic>// Relax the pointer safety so jobs can schedule with this struct.
+</span><span style=color:#93a1a1;font-style:italic></span><span style=color:#268bd2>    [NativeDisableUnsafePtrRestriction]</span> <span style=color:#859900>internal</span> <span style=color:#859900>void</span>* <span style=color:#268bd2>m_Buffer</span>;
+    <span style=color:#859900>internal</span> <span style=color:#268bd2>Allocator</span> <span style=color:#268bd2>m_AllocatorLabel</span>;
+
+    <span style=color:#859900>public</span> <span style=color:#859900>void</span> <span style=color:#268bd2>Dispose</span>()
+    {
+        <span style=color:#93a1a1;font-style:italic>// Free the allocated memory
+</span><span style=color:#93a1a1;font-style:italic></span>        <span style=color:#268bd2>UnsafeUtility</span>.<span style=color:#268bd2>Free</span>(<span style=color:#268bd2>m_Buffer</span>, <span style=color:#268bd2>m_AllocatorLabel</span>);
+    }
+}
+<span style=color:#268bd2>
+</span><span style=color:#268bd2>[BurstCompile]</span>
+<span style=color:#859900>internal</span> <span style=color:#859900>struct</span> <span style=color:#cb4b16>NativeCustomArrayDisposeJob</span> : <span style=color:#268bd2>IJob</span>
+{
+    <span style=color:#859900>internal</span> <span style=color:#268bd2>NativeCustomArrayDispose</span> <span style=color:#268bd2>Data</span>;
+
+    <span style=color:#859900>public</span> <span style=color:#859900>void</span> <span style=color:#268bd2>Execute</span>()
+    {
+        <span style=color:#268bd2>Data</span>.<span style=color:#268bd2>Dispose</span>();
+    }
+}
+</code></pre></td></tr></table></div></div><h2 id=usage>Usage</h2><p>And that is it! We now have added support for parallel jobs to our <code>NativeIntArray</code>. An example of this is shown below.</p><div class=highlight><div style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#586e75;background-color:#eee8d5;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#859900>using</span> <span style=color:#268bd2>Unity.Burst</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>Unity.Collections</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>Unity.Entities</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>Unity.Jobs</span>;
+<span style=color:#859900>using</span> <span style=color:#268bd2>Unity.Mathematics</span>;
+
+<span style=color:#859900>public</span> <span style=color:#859900>class</span> <span style=color:#cb4b16>NativeIntArraySystem</span> : <span style=color:#268bd2>SystemBase</span>
+{
+	<span style=color:#859900>protected</span> <span style=color:#859900>override</span> <span style=color:#859900>void</span> <span style=color:#268bd2>OnUpdate</span>()
+    {
+        <span style=color:#268bd2>NativeIntArray</span> <span style=color:#268bd2>myArray</span> = <span style=color:#859900>new</span> <span style=color:#268bd2>NativeIntArray</span>(<span style=color:#2aa198;font-weight:700>1</span><span style=color:#2aa198;font-weight:700>0</span><span style=color:#2aa198;font-weight:700>0</span>, <span style=color:#268bd2>Allocator</span>.<span style=color:#268bd2>TempJob</span>);
+		<span style=color:#268bd2>Job</span>.<span style=color:#268bd2>WithName</span>(<span style=color:#2aa198>&#34;NativeIntArrayJob&#34;</span>)
+            .<span style=color:#268bd2>WithDeallocateOnJobCompletion</span>(<span style=color:#268bd2>myArray</span>)
+            .<span style=color:#268bd2>WithCode</span>(() =&gt;
+            {
+                <span style=color:#859900>for</span> (<span style=color:#859900;font-weight:700>int</span> <span style=color:#268bd2>i</span> = <span style=color:#2aa198;font-weight:700>0</span>; <span style=color:#268bd2>i</span> &lt; <span style=color:#268bd2>myArray</span>.<span style=color:#268bd2>Length</span>; <span style=color:#268bd2>i</span>++)
+                    <span style=color:#268bd2>myArray</span>.<span style=color:#268bd2>Increment</span>(<span style=color:#268bd2>i</span>);
+            }).<span style=color:#268bd2>Run</span>();
+	}
+}
+</code></pre></td></tr></table></div></div><h2 id=conclusion>Conclusion</h2><p>This article showed how to add support for <code>.WithDeallocateOnJobCompletion</code> and <code>[DeallocateOnJobCompletion]</code>. In the next part(s) we will continue to add features to our <code>NativeIntArray</code> by supporting parallel jobs.</p><p><a href=/2020/03/customnativecontainerpt1/>Custom Native Container [Part 1]: The Basics</a><br>Custom Native Container [Part 2]: Deallocate On Job Completion<br><a href=/2020/03/customnativecontainerpt3/>Custom Native Container [Part 3]: Parallel Job Using Min Max</a><br><a href=/2020/03/customnativecontainerpt4/>Custom Native Container [Part 4]: Parallel Job Using ParallelWriter</a></p></div></article></div><nav class="bar bar-footer clearfix" data-stick-bottom><div class=bar-inner><ul class="pager pull-left"><li class=prev><a href=https://dotsplayground.com/2020/03/customnativecontainerpt1/ title="Custom Native Container [Part 1]: The Basics"><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;Older</span></a></li><li class=next><a href=https://dotsplayground.com/2020/03/customnativecontainerpt3/ title="Custom Native Container [Part 3]: Parallel Job Using Min Max"><span>Newer&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden=true></i></a></li><li class=toggle-toc><a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=Catalogue role=button><span>[&nbsp;</span><span>Catalogue</span>
+<i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><div class=bar-right><div class=share-component data-sites=facebook,twitter,linkedin data-mobile-sites=facebook,twitter,linkedin></div></div></div></nav></main><footer class=footer itemscope itemtype=http://schema.org/WPFooter><ul class=social-links><li><a href=https://github.com/MarjoleinKaal target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i>Marjolein</a></li><li><a href=https://github.com/FireFlyForLife target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i>Maiko</a></li><li><a href=https://github.com/MennoMarkus target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i>Menno</a></li><li><a href=https://github.com/Nvs2000 target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i>Niels</a></li><li><a href=https://github.com/jesseroffel target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i>Jesse</a></li><li><a href=https://github.com/JonahRutten target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i>Jonah</a></li><li><a href=https://github.com/PepijnAverink target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i>Pepijn</a></li><li><a href=https://github.com/RobinACS target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i>Robin</a></li><li><a href=https://github.com/simonrenger target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i>Simon</a></li><li><a href=https://dotsplayground.com/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li></ul><div class=copyright>&copy;2019 -
+2020<div class=publishby>Theme by <a href=https://github.com/xiaoheiAh target=_blank>xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.</div></div></footer><script src=https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js></script><script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/rust.min.js></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/dockerfile.min.js></script><script></script><script type=text/javascript src=https://dotsplayground.com/js/application.js></script><script type=text/javascript src=https://dotsplayground.com/js/plugin.js></script><script>(function(window){var INSIGHT_CONFIG={TRANSLATION:{POSTS:'Posts',PAGES:'Pages',CATEGORIES:'Categories',TAGS:'Tags',UNTITLED:'(Untitled)',},ROOT_URL:'https:\/\/dotsplayground.com\/',CONTENT_URL:'https:\/\/dotsplayground.com\/\/searchindex.json ',};window.INSIGHT_CONFIG=INSIGHT_CONFIG;})(window);</script><script type=text/javascript src=https://dotsplayground.com/js/insight.js></script><script type=text/javascript src=https://dotsplayground.com/raphael/raphael.min.js></script><script type=text/javascript src=https://flowchart.js.org/flowchart-latest.js></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-CFEDM0JHBQ"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());gtag('config','G-CFEDM0JHBQ');</script><script>$(".diagram").each((indx,elm)=>{var diagram=flowchart.parse($(elm).text());$(elm).text("");diagram.drawSVG(elm);});</script></body></html>
