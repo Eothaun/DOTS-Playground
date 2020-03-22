@@ -7,6 +7,9 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 
+// This enables support for parallel job exection where each worker thread 
+// is only allowed to operation on a range of indices between min and max.
+[NativeContainerSupportsMinMaxWriteRestriction]
 // Enable support for ".WithDeallocateOnJobCompletion" and "[DeallocateOnJobCompletion]".
 [NativeContainerSupportsDeallocateOnJobCompletion]
 // Needed to mark as a native container.
@@ -21,6 +24,11 @@ public unsafe struct NativeIntArray : IDisposable
 
 	// This macro makes sure safety features can be disabled for better performance.
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
+	// NativeContainerSupportsMinMaxWriteRestriction expects the passed ranges it can operate on to be checked for safety.
+	// The range is passed to the container when an parallel job schedules it's batch jobs.
+	internal int m_MinIndex;
+	internal int m_MaxIndex;
+
 	// Handle to tell if operations such as reading and writing can be performed safely.
 	internal AtomicSafetyHandle m_Safety;
 
@@ -75,9 +83,35 @@ public unsafe struct NativeIntArray : IDisposable
 		array.m_AllocatorLabel = allocator;
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
+		// By default the job can operate over the entire range.
+		array.m_MinIndex = 0;
+		array.m_MaxIndex = length - 1;
+
 		// Create a dispose sentinel to track memory leaks. 
 		// An atomic safety handle is also created automatically.
 		DisposeSentinel.Create(out array.m_Safety, out array.m_DisposeSentinel, 1, allocator);
+#endif
+	}
+
+	// Remove calls to this function if safety is disabled.
+	[Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
+	private void CheckRangeAccess(int index)
+	{
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+		// Check if we're within the range of indices that this parallel batch job operates on.
+		if (index < m_MinIndex || index > m_MaxIndex)
+		{
+			if (index < Length && (m_MinIndex != 0 || m_MaxIndex != Length - 1))
+				throw new IndexOutOfRangeException(string.Format(
+					"Index {0} is out of restricted IJobParallelFor range [{1}...{2}] in ReadWriteBuffer.\n" +
+					"ReadWriteBuffers are restricted to only read & write the element at the job index. " +
+					"You can use double buffering strategies to avoid race conditions due to " +
+					"reading & writing in parallel to the same elements from a job.",
+					index, m_MinIndex, m_MaxIndex));
+
+			// This is not a parallel job but the index is still out of range.
+			throw new IndexOutOfRangeException(string.Format("Index {0} is out of range of '{1}' Length.", index, Length));
+		}
 #endif
 	}
 
@@ -88,6 +122,7 @@ public unsafe struct NativeIntArray : IDisposable
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
 			AtomicSafetyHandle.CheckReadAndThrow(m_Safety);
 #endif
+			CheckRangeAccess(index);
 			return UnsafeUtility.ReadArrayElement<int>(m_Buffer, index);
 		}
 
@@ -97,6 +132,7 @@ public unsafe struct NativeIntArray : IDisposable
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
 			AtomicSafetyHandle.CheckWriteAndThrow(m_Safety);
 #endif
+			CheckRangeAccess(index);
 			UnsafeUtility.WriteArrayElement(m_Buffer, index, value);
 		}
 	}
