@@ -13,7 +13,7 @@ Native containers are used for data communication between jobs. Unity already pr
 
 In this article we will write such a custom container that can be used with jobs. In subsequent articles we will look into adding more advanced features to this container such as adding support for parallel jobs. These articles will not be about how to write a *good* container type, but rather will seek to demonstrate all the features that can be implemented when writing a custom native container. This article expects basic knowledge of pointers and memory management.
 
-[The final result of this article can be found here.](TODO)
+[The final result of this article can be found here.](https://github.com/Eothaun/DOTS-Playground/commit/5c00dadb86cc68ed76f329f8b8a49a7249cd475d#diff-4107cbc15e6b7565cf1a71565ac1e755)
 
 ## NativeIntArray
 The container we will be implementing is called NativeIntArray. It is a fixed size array of integers, essentially the same as `NativeArray<int>`. We will purposely use such a simple example so we can focus on the actual native container implementation. The basic structure of this container is shown below. We will override parts of it to turn into a native container.
@@ -239,4 +239,3 @@ Custom Native Container [Part 1]: The Basics
 [Custom Native Container [Part 2]: Deallocate On Job Completion]({{< relref "CustomNativeContainerPt2.md" >}})  
 [Custom Native Container [Part 3]: Parallel Job Using Min Max]({{< relref "CustomNativeContainerPt3.md" >}})  
 [Custom Native Container [Part 4]: Parallel Job Using ParallelWriter]({{< relref "CustomNativeContainerPt4.md" >}})  
-[Custom Native Container [Part 5]: Parallel Job Using ParallelWriter With Thread Index]({{< relref "CustomNativeContainerPt5.md" >}})   

@@ -11,8 +11,8 @@ description="This article will show how to add support to a custom native contai
 ## Introduction
 In the previous article in this series, [Custom Native Container [Part 1]: The Basics]({{< relref "CustomNativeContainerPt1.md" >}}), we looked into how we can create a bare basic custom native container for usage with the job system. In this article we will extend our `NativeIntArray` container to add support for usage with `.WithDeallocateOnJobCompletion` and `[DeallocateOnJobCompletion]`.  
 
-[The result of the previous article can be found here.](TODO)  
-[The final result of this article can be found here.](TODO)
+[The result of the previous article can be found here.](https://github.com/Eothaun/DOTS-Playground/commit/5c00dadb86cc68ed76f329f8b8a49a7249cd475d#diff-4107cbc15e6b7565cf1a71565ac1e755)  
+[The final result of this article can be found here.](https://github.com/Eothaun/DOTS-Playground/commit/0afe23b3c72c4286029b94ea0dac78b29dd1b8f0#diff-4107cbc15e6b7565cf1a71565ac1e755)
 
 ## 1) Enable Support
 To enable support for deallocation on job completion we must add the `[NativeContainerSupportsDeallocateOnJobCompletion]` attribute to our container struct. We will also use this opportunity to have a quick reminder of what our container roughly looked like: a simple array of integers.
@@ -167,4 +167,3 @@ This article showed how to add support for `.WithDeallocateOnJobCompletion` and 
 Custom Native Container [Part 2]: Deallocate On Job Completion  
 [Custom Native Container [Part 3]: Parallel Job Using Min Max]({{< relref "CustomNativeContainerPt3.md" >}})  
 [Custom Native Container [Part 4]: Parallel Job Using ParallelWriter]({{< relref "CustomNativeContainerPt4.md" >}})  
-[Custom Native Container [Part 5]: Parallel Job Using ParallelWriter With Thread Index]({{< relref "CustomNativeContainerPt5.md" >}})  

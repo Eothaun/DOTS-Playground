@@ -11,6 +11,9 @@ description="This article will show how to add support for simultaneous writing 
 ## Introduction
 In the previous article in this series, [Custom Native Container [Part 3]: Parallel Job Using Min Max]({{< relref "CustomNativeContainerPt3.md" >}}), we added support for parallel jobs. But these jobs were limited to writing to a single index of the array. In this article we will remove this limitation from our `NativeIntArray` by adding support for `ParallelWriter`. The article assumes basic (C#) multithreading knowledge.
 
+[The result of the previous article can be found here.](https://github.com/Eothaun/DOTS-Playground/commit/62bf8506ea598ab6ac32eb158efce4b3f90d929b#diff-4107cbc15e6b7565cf1a71565ac1e755)  
+[The final result of this article can be found here.](https://github.com/Eothaun/DOTS-Playground/commit/67e57f173a4b629b2af5c1e79c12b01837f71006#diff-4107cbc15e6b7565cf1a71565ac1e755)
+
 ## 1) ParallelWriter Struct
 First we must add a `ParallelWriter` struct within our `NativeIntArray` struct. This is essentially a new container that only allows writing to the array, but allows multiple threads to do so. The actual write operations are implemented using the `Interlocked` class. This class provides atomic operations. More information can be found [here](https://docs.microsoft.com/en-us/dotnet/api/system.threading.interlocked?view=netframework-4.8)
 ```csharp {linenostart=144}
@@ -189,4 +192,3 @@ In the next part we will look into how we can use the thread index to implement 
 [Custom Native Container [Part 2]: Deallocate On Job Completion]({{< relref "CustomNativeContainerPt2.md" >}})  
 [Custom Native Container [Part 3]: Parallel Job Using Min Max]({{< relref "CustomNativeContainerPt3.md" >}})  
 Custom Native Container [Part 4]: Parallel Job Using ParallelWriter  
-[Custom Native Container [Part 5]: Parallel Job Using ParallelWriter With Thread Index]({{< relref "CustomNativeContainerPt5.md" >}})  
