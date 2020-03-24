@@ -162,6 +162,7 @@ public unsafe struct NativeIntArray : IDisposable
 		// Copy length for convenience
 		public int Length => m_Length;
 
+		[WriteAccessRequired]
 		public int Increment(int index)
 		{
 			// Increment still needs to safety check for write permissions and index range.
@@ -174,6 +175,7 @@ public unsafe struct NativeIntArray : IDisposable
 			return Interlocked.Increment(ref *((int*)m_Buffer + index));
 		}
 
+		[WriteAccessRequired]
 		public int Decrement(int index)
 		{
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
@@ -184,6 +186,7 @@ public unsafe struct NativeIntArray : IDisposable
 			return Interlocked.Decrement(ref *((int*)m_Buffer + index));
 		}
 
+		[WriteAccessRequired]
 		public int Add(int index, int value)
 		{
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
@@ -210,6 +213,7 @@ public unsafe struct NativeIntArray : IDisposable
 		return writer;
 	}
 
+	[WriteAccessRequired]
 	public void Dispose()
 	{
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
@@ -228,14 +232,17 @@ public unsafe struct NativeIntArray : IDisposable
 	public unsafe JobHandle Dispose(JobHandle inputDeps)
 	{
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
+		if (!UnsafeUtility.IsValidAllocator(m_AllocatorLabel))
+			throw new InvalidOperationException("The NativeArray can not be Disposed because it was not allocated with a valid allocator.");
+
 		// DisposeSentinel needs to be cleared on the main thread.
 		DisposeSentinel.Clear(ref m_DisposeSentinel);
 #endif
 
 		// Create a job to dispose of our container and pass a copy of our pointer to it.
-		NativeCustomArrayDisposeJob disposeJob = new NativeCustomArrayDisposeJob()
+		NativeIntArrayDisposeJob disposeJob = new NativeIntArrayDisposeJob()
 		{
-			Data = new NativeCustomArrayDispose()
+			Data = new NativeIntArrayDispose()
 			{
 				m_Buffer = m_Buffer,
 				m_AllocatorLabel = m_AllocatorLabel
@@ -255,7 +262,7 @@ public unsafe struct NativeIntArray : IDisposable
 }
 
 [NativeContainer]
-internal unsafe struct NativeCustomArrayDispose
+internal unsafe struct NativeIntArrayDispose
 {
 	// Relax the pointer safety so jobs can schedule with this struct.
 	[NativeDisableUnsafePtrRestriction] internal void* m_Buffer;
@@ -269,9 +276,9 @@ internal unsafe struct NativeCustomArrayDispose
 }
 
 [BurstCompile]
-internal struct NativeCustomArrayDisposeJob : IJob
+internal struct NativeIntArrayDisposeJob : IJob
 {
-	internal NativeCustomArrayDispose Data;
+	internal NativeIntArrayDispose Data;
 
 	public void Execute()
 	{
