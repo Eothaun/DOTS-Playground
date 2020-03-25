@@ -186,9 +186,10 @@ public class NativeIntArraySystem : SystemBase
 
 ## Conclusion
 This article showed how to add support for `ParallelWriter`. Normal concurrent data structure design applies, so we can implement our operations using the `Interlocked` class. One thing to note however is that our container is not a managed object, and can therefor not be locked to a thread. This means that all native containers need to be designed as lock free data structures.  
-In the next part we will look into how we can use the thread index to implement a new lock free data structure to hold any value.
+In the next part we will look into how we can use the thread index to implement a new lock free data structure.
 
 [Custom Native Container [Part 1]: The Basics]({{< relref "CustomNativeContainerPt1.md" >}})  
 [Custom Native Container [Part 2]: Deallocate On Job Completion]({{< relref "CustomNativeContainerPt2.md" >}})  
 [Custom Native Container [Part 3]: Parallel Job Using Min Max]({{< relref "CustomNativeContainerPt3.md" >}})  
 Custom Native Container [Part 4]: Parallel Job Using ParallelWriter  
+[Custom Native Container [Part 5]: ParallelFor Using ParallelWriter With Thread Index]({{< relref "CustomNativeContainerPt5.md" >}})  

@@ -115,7 +115,7 @@ Next we will write out constructor and `Allocate` function. The constructor will
         if (size > int.MaxValue)
             throw new ArgumentOutOfRangeException(nameof(length), $"Length * sizeof(int) cannot exceed {(object)int.MaxValue} bytes");
 
-        // There are other checks you might want to perform when working with templated containers.
+        // There are other checks you might want to perform when working with generic containers.
         /* 
         if (!UnsafeUtility.IsBlittable<T>())
            throw new ArgumentException(string.Format("{0} used in NativeCustomArray<{0}> must be blittable", typeof(T)));
@@ -239,3 +239,4 @@ Custom Native Container [Part 1]: The Basics
 [Custom Native Container [Part 2]: Deallocate On Job Completion]({{< relref "CustomNativeContainerPt2.md" >}})  
 [Custom Native Container [Part 3]: Parallel Job Using Min Max]({{< relref "CustomNativeContainerPt3.md" >}})  
 [Custom Native Container [Part 4]: Parallel Job Using ParallelWriter]({{< relref "CustomNativeContainerPt4.md" >}})  
+[Custom Native Container [Part 5]: ParallelFor Using ParallelWriter With Thread Index]({{< relref "CustomNativeContainerPt5.md" >}})  

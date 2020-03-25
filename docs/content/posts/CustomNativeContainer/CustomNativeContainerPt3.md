@@ -10,7 +10,7 @@ description="This article will show how to add support for parallel jobs by cons
 
 {{< figure src="/CustomNativeContainer/IJobParallelForDiagram.png#center">}}  
 ## Introduction
-In previous parts of this series we looked into how to create a basic custom native container that can be used with jobs. This article will improve our `NativeIntArray` container to add support for parallel jobs. This is done by using a pattern where the job is split into ranges and each job is only allowed to operate on this range. This limits the array access to the index passed through `Execute(int index)`. More information about how these jobs are schedualed behind the scenes can be found in the Unity documentation [here](https://docs.unity3d.com/Manual/JobSystemParallelForJobs.html).  
+In previous parts of this series we looked into how to create a basic custom native container that can be used with jobs. This article will improve our `NativeIntArray` container to add support for parallel jobs. This is done by using a pattern where the job is split into ranges and each job is only allowed to operate on this range. This limits the array access to the index passed through `Execute(int index)`. More information about how these jobs are scheduled behind the scenes can be found in the Unity documentation [here](https://docs.unity3d.com/Manual/JobSystemParallelForJobs.html).  
 
 [The result of the previous article can be found here.](https://github.com/Eothaun/DOTS-Playground/commit/0afe23b3c72c4286029b94ea0dac78b29dd1b8f0#diff-4107cbc15e6b7565cf1a71565ac1e755)  
 [The final result of this article can be found here.](https://github.com/Eothaun/DOTS-Playground/commit/62bf8506ea598ab6ac32eb158efce4b3f90d929b#diff-4107cbc15e6b7565cf1a71565ac1e755)
@@ -181,3 +181,4 @@ This article showed how to add support for parallel jobs using a pattern where t
 [Custom Native Container [Part 2]: Deallocate On Job Completion]({{< relref "CustomNativeContainerPt2.md" >}})  
 Custom Native Container [Part 3]: Parallel Job Using Min Max  
 [Custom Native Container [Part 4]: Parallel Job Using ParallelWriter]({{< relref "CustomNativeContainerPt4.md" >}})  
+[Custom Native Container [Part 5]: ParallelFor Using ParallelWriter With Thread Index]({{< relref "CustomNativeContainerPt5.md" >}})  

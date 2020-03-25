@@ -167,3 +167,4 @@ This article showed how to add support for `.WithDeallocateOnJobCompletion` and 
 Custom Native Container [Part 2]: Deallocate On Job Completion  
 [Custom Native Container [Part 3]: Parallel Job Using Min Max]({{< relref "CustomNativeContainerPt3.md" >}})  
 [Custom Native Container [Part 4]: Parallel Job Using ParallelWriter]({{< relref "CustomNativeContainerPt4.md" >}})  
+[Custom Native Container [Part 5]: ParallelFor Using ParallelWriter With Thread Index]({{< relref "CustomNativeContainerPt5.md" >}})  

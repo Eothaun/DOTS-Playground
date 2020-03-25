@@ -65,7 +65,7 @@ After a change in the code line 35 is marked as vectorized.
 Can be found under: `DOTS > DOTS Compiler > Open Inspector...`
 
 {{< figure src="/DOTSEditor/DOTSCompiler.png">}} 
-The DOTS Compiler can show DOTS generated code. This means its able to show you the code generated when using the `[GenerateAuthoringComponent]` tag.
+The DOTS Compiler can show DOTS generated code. This means its able to show you the code generated when using the `[GenerateAuthoringComponent]` tag. But not only that, it's also capable of showing the code generated from `Entities.ForEach` or `Job.WithCode` code. This can be really useful to see what the you final job actually looks like.
 
 ## Others
 To further control the compilation process you can enable and disable multiple setting having to do with debugging and safety under `Jobs`. These speak for themselves so I will not be going in depth any further.
