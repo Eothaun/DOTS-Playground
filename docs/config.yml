@@ -61,11 +61,17 @@ menu:
       url: /tags
       weight: 5
 
+    - identifier: books
+      name: books
+      title: Dots Resources
+      url: /research_resources
+      weight: 6
+
     - identifier: about
       name: About
       title: About
       url: /about
-      weight: 6
+      weight: 7
 
 
 params:
