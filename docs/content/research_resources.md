@@ -1,6 +1,6 @@
 +++
 title = "Research Resources"
-description = "List of Research Resources"
+description = "List of Research Resources for Unity 3D DOTS (Data-Oriented Technology Stack)"
 date = "2019-11-20"
 aliases = ["research-resources","researchresources","resources"]
 author = ["Simon"]
