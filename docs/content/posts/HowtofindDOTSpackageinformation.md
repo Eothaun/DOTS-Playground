@@ -1,5 +1,5 @@
 +++
-title= "How to find more information about the DOTS packages? "
+title= "How to find more information about a DOTS packages? "
 author= ["Simon"]
 tags=[ "dots","ecs","csharp","beginner"]
 categories=["dots","ecs","unity"]
