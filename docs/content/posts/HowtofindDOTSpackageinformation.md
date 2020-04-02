@@ -5,7 +5,7 @@ tags=[ "dots","ecs","csharp","beginner"]
 categories=["dots","ecs","unity"]
 series = ["Unity's DOTS"]
 date= 2020-04-01T10:59:02+01:00
-description="This article will show you a overview of how you can find out more about Unity's DOTS (Data-Oriented Technology Stack), Burst, C# Job System internals. This is very useful when the Documentation does not help you further. It is also a great source of inspiration for your own project."
+description="This article will show you an overview of how you can find out more about Unity's DOTS (Data-Oriented Technology Stack), Burst, C# Job System internals. This is very useful when the Documentation does not help you further. It is also a great source of inspiration for your project."
 
 +++
 
