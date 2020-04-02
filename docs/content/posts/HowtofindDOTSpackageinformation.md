@@ -18,7 +18,7 @@ My teammate [Menno](https://www.mennomarkus.com/) learned a great deal from the 
 
 ## Where to start?
 
-Whenever you have a Unity project and you have access to the source code *if it is a C# only project*. DOTS and its related packages are written in HPC# ([High-performance C#](https://blogs.unity3d.com/2019/02/26/on-dots-c-c/)) Unity's subset. This means we have access to its internals!
+Whenever you have a Unity project and you have access to the source code of packages. *Only to the C# frontend of the package not to the C++ facilities*. DOTS and its related packages are written in HPC# ([High-performance C#](https://blogs.unity3d.com/2019/02/26/on-dots-c-c/)) Unity's subset. This means we have access to its internals!
 
 ### Where would they be? 
 
